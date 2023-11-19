@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import LogTable from "../components/LogTable";
 import { BounceLoader } from "react-spinners";
+import { useNavigate } from "react-router-dom";
 
 const App = () => {
   const [logs, setLogs] = useState([]);
@@ -19,6 +20,7 @@ const App = () => {
 
   const [loading, setLoading] = useState(true);
   const [filtersChanged, setFiltersChanged] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchLogs();
@@ -56,6 +58,10 @@ const App = () => {
     setFiltersChanged(true);
   };
 
+  const handlePostSubmit = () => {
+    navigate('/');
+  }
+
   const handleClearSubmit = () => {
     setFilters({
       level: "",
@@ -72,13 +78,13 @@ const App = () => {
   };
 
   return (
-    <div className="container p-6 min-h-screen bg-[#121212] flex flex-col min-w-screen">
+    <div className="container p-6 min-h-screen bg-gray-900 flex flex-col min-w-screen">
       <h1 className="text-4xl font-bold w-fit m-auto mb-4 text-white">
         Filter Queries
       </h1>
       <div className="flex flex-row space-x-4">
         <div
-          className="sticky top-20 h-full flex flex-col space-y-3"
+          className="sticky top-10 h-full flex flex-col space-y-3"
           style={{ minWidth: "200px" }}
         >
           <input
@@ -158,6 +164,12 @@ const App = () => {
           >
             Clear Filters
           </button>
+          <button
+            className="px-4 py-2 bg-green-500 text-white rounded"
+            onClick={handlePostSubmit}
+          >
+            Post Query
+          </button> 
         </div>
 
         <div className="flex-grow">

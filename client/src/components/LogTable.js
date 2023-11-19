@@ -1,11 +1,22 @@
-const renderCellValue = (value) => {
+import React from 'react';
+
+const renderCellValue = (key, value) => {
+  if (key === 'metadata.parentResourceId') {
+    return (
+      <div>
+        <strong>metadata.parentResourceId:</strong> {value}
+      </div>
+    );
+  }
+
   if (typeof value === 'object' && value !== null) {
-    return Object.entries(value).map(([key, val]) => (
-      <div key={key}>
-        <strong>{key}:</strong> {renderCellValue(val)}
+    return Object.entries(value).map(([innerKey, innerValue]) => (
+      <div key={innerKey}>
+        <strong>{innerKey}:</strong> {renderCellValue(innerKey, innerValue)}
       </div>
     ));
   }
+
   return value;
 };
 
@@ -14,17 +25,14 @@ const LogTable = ({ logs }) => {
     return <h2 className="w-fit m-auto text-white">No logs available.</h2>;
   }
 
-  const headers = ["_source"]
+  const headers = Object.keys(logs[0]._source);
 
   return (
-    <table className="min-w-full bg-white border border-gray-300">
+    <table className="min-w-full border border-gray-300 text-white rounded-lg border-separate">
       <thead>
         <tr>
           {headers.map((header) => (
-            <th
-              key={header}
-              className="border border-gray-300 px-4 py-2 font-bold"
-            >
+            <th key={header} className="border border-gray-300 px-4 py-2 font-bold">
               {header}
             </th>
           ))}
@@ -35,7 +43,7 @@ const LogTable = ({ logs }) => {
           <tr key={index}>
             {headers.map((header) => (
               <td key={header} className="border border-gray-300 px-4 py-2">
-                {renderCellValue(log[header])}
+                {renderCellValue(header, log._source[header])}
               </td>
             ))}
           </tr>
