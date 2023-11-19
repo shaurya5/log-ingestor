@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  backend:
+    build:
+      context: ./server
+    ports:
+      - "3000:3000"
+    environment:
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=shaurya
+      - PORT=3000
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - "3001:3001"
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge

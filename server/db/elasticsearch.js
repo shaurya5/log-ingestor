@@ -20,7 +20,31 @@ const setupElasticsearch = async () => {
     const indexExists = await client.indices.exists({ index: 'logs' });
 
     if (!indexExists) {
-      await client.indices.create({ index: 'logs' });
+      await client.indices.create({
+        index: 'logs',
+        body: {
+          settings: {
+            number_of_shards: 2,
+            number_of_replicas: 1,
+          },
+          mappings: {
+            properties: {
+              level: { type: 'keyword' },
+              message: { type: 'text' },
+              resourceId: { type: 'keyword' },
+              timestamp: { type: 'date' },
+              traceId: { type: 'keyword' },
+              spanId: { type: 'keyword' },
+              commit: { type: 'keyword' },
+              metadata: {
+                properties: {
+                  parentResourceId: { type: 'keyword' },
+                },
+              },
+            },
+          },
+        },
+      });
       console.log('Index created');
     } else {
       console.log('Index already exists');
