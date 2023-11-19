@@ -14,6 +14,3 @@ wait_for_elasticsearch
 
 (cd client && yarn && yarn start) &
 (cd server && yarn && node index.js)
-
-
-sleep 30000 
