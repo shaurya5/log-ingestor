@@ -11,7 +11,7 @@ const PostQuery = () => {
   };
 
   const notifyError = () => {
-    toast.error("Query Posted Successfully!");
+    toast.error("Error while posting query!");
   };
 
   const [sampleQuery] = useState(
@@ -57,7 +57,7 @@ const PostQuery = () => {
     console.log("Custom Query Submitted");
     try {
       const data = await axios.post(
-        "http://localhost:3000/logs",
+        "http://localhost:3000/",
         JSON.parse(customQuery)
       );
       notifySuccess();
