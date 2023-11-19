@@ -11,9 +11,11 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(cors())
 
+
 setupElasticsearch();
 
-app.post('/logs', async (req, res) => {
+
+app.post('/', async (req, res) => {
   try {
     const { body } = req;
     await indexLog(body);

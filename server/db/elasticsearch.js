@@ -3,7 +3,7 @@ const elasticsearch = require('@elastic/elasticsearch');
 const fs = require('fs');
 
 const client = new elasticsearch.Client({
-  node: 'https://localhost:9200',
+  node: 'http://localhost:9200/',
   auth: {
     username: process.env.ELASTICSEARCH_USERNAME,
     password: process.env.ELASTICSEARCH_PASSWORD,

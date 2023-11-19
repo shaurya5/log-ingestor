@@ -1,20 +1,22 @@
-# Use an official Node.js runtime as a base image
-FROM node:14
+# Use an official Node runtime as a base image
+FROM node:18.13.0
 
-# Set the working directory to /client
+# Set the working directory in the container
 WORKDIR /client
 
 # Copy package.json and yarn.lock to the working directory
 COPY package.json yarn.lock ./
 
-# Install dependencies using Yarn
+# Install app dependencies
 RUN yarn install
 
-# Copy the rest of the application code
+# Copy the application code into the container
 COPY . .
 
-# Expose the port that your ReactJS application will run on
-EXPOSE 3001
+EXPOSE 3003
 
-# Command to run your ReactJS application
+# Build the React app for production
+RUN yarn build
+
+# Specify the command to run on container startup
 CMD ["yarn", "start"]

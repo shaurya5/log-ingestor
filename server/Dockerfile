@@ -1,5 +1,5 @@
 # Use an official Node.js runtime as a base image
-FROM node:14
+FROM node:18.13.0
 
 # Set the working directory to /server
 WORKDIR /server
