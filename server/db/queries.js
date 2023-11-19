@@ -1,34 +1,4 @@
-require('dotenv').config();
-const elasticsearch = require('@elastic/elasticsearch');
-const fs = require('fs');
-
-const client = new elasticsearch.Client({
-  node: 'https://localhost:9200', // Your Elasticsearch server
-  auth: {
-    username: process.env.ELASTICSEARCH_USERNAME,
-    password: process.env.ELASTICSEARCH_PASSWORD,
-  },
-  tls: {
-    ca: fs.readFileSync('./static/http_ca.crt'),
-    rejectUnauthorized: false,
-  },
-  requestTimeout: 60000,
-});
-
-const setupElasticsearch = async () => {
-  try {
-    const indexExists = await client.indices.exists({ index: 'logs' });
-
-    if (!indexExists) {
-      await client.indices.create({ index: 'logs' });
-      console.log('Index created');
-    } else {
-      console.log('Index already exists');
-    }
-  } catch (err) {
-    console.error('Error setting up Elasticsearch:', err.message);
-  }
-};
+const { client } = require("./elasticsearch");
 
 const indexLog = async (log) => {
   try {
@@ -44,7 +14,7 @@ const indexLog = async (log) => {
     } = log;
 
     await client.index({
-      index: 'logs',
+      index: "logs",
       body: {
         level,
         message,
@@ -59,9 +29,9 @@ const indexLog = async (log) => {
       },
     });
 
-    console.log('Log indexed successfully');
+    console.log("Log indexed successfully");
   } catch (err) {
-    console.error('Error indexing log:', err.message);
+    console.error("Error indexing log:", err.message);
   }
 };
 
@@ -69,17 +39,28 @@ const searchLogs = async (filters) => {
   const query = buildQuery(filters);
 
   const response = await client.search({
-    index: 'logs',
+    index: "logs",
     body: { query },
   });
 
   return response.hits.hits;
 };
 
+const containsFields = ["message"] // fields which dont require an exact keyword match
+
 const buildQuery = (filters) => {
   const mustClauses = Object.entries(filters).map(([key, value]) => {
+    if (key === "startTimestamp" && value) {
+      return { range: { timestamp: { gte: value } } };
+    }
+    if (key === "endTimestamp" && value) {
+      return { range: { timestamp: { lte: value } } };
+    }
+    if (containsFields.includes(key) && value) {
+      return { match: { [key]: { query: value, operator: "and" } } };
+    }
     if (value) {
-      return { match: { [key]: value } };
+      return { term: { [key + ".keyword"]: value } };
     }
     return { match_all: {} };
   });
@@ -91,10 +72,12 @@ const buildQuery = (filters) => {
   };
 };
 
+
+
 const getAllLogs = async () => {
   try {
     const response = await client.search({
-      index: 'logs',
+      index: "logs",
       body: {
         query: {
           match_all: {},
@@ -104,13 +87,12 @@ const getAllLogs = async () => {
 
     return response.hits.hits;
   } catch (err) {
-    console.error('Error getting all logs:', err.message);
+    console.error("Error getting all logs:", err.message);
     throw err;
   }
 };
 
 module.exports = {
-  setupElasticsearch,
   indexLog,
   searchLogs,
   getAllLogs,
