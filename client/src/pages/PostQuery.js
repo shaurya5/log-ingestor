@@ -43,7 +43,7 @@ const PostQuery = () => {
     console.log("Sample Query Submitted");
     try {
       const data = await axios.post(
-        "http://localhost:3000/logs",
+        "http://localhost:3000/",
         JSON.parse(sampleQuery)
       );
       notifySuccess();

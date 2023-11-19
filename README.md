@@ -19,9 +19,12 @@ A query can be posted either through the web interface or a POST request can be 
 3. Search within specific timestamps has been implemented
 4. Multiple filters can be combined for results
 5. Real time log ingestion and searching can be done
+6. Stateful logs - The logs remain stored even after the process is killed. If this is not required, this line `docker-compose down` can be uncommented in the `script.sh` file in the root directory
 
 ## How to run
-Run `.\script.sh` in the root directory
+Run `.\script.sh` in the root directory.
+
+The server and client automatically start after elastic search is in healthy state.
 
 ## Future Work
 1. Role-based access to the query interface can be implemented
